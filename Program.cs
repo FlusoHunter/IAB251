@@ -1,0 +1,646 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
+
+namespace Assinment_2_ACTUAL
+{
+    class Program
+    {
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+        #region Classes
+        //Customer class
+        abstract class User
+        {
+            public string Email { get; set; }
+            public string Password { get; set; }
+        }
+        private static List<User> users = new List<User>();
+        private static User currentUser;
+
+        class Customer : User
+        {
+            public string Name { get; set; }
+            public string FamilyName { get; set; }
+            public string Mobile { get; set; }
+            public string Company { get; set; }
+            public string Address { get; set; }
+
+
+
+            public Customer(string name, string familyname, string email, string phone, string company, string address, string password)
+            {
+                Name = name;
+                FamilyName = familyname;
+                Email = email;
+                Mobile = phone;
+                Company = company;
+                Address = address;
+                Password = password;
+            }
+        }
+        private static List<Customer> customers = new List<Customer>();
+        private static Customer currentCustomer;
+
+        class Employee : User
+        {
+            public string Name { get; set; }
+            public string FamilyName { get; set; }
+            public string Mobile { get; set; }
+            public string EmployeeType { get; set; }
+            public string Address { get; set; }
+
+
+            public Employee(string name, string familyname, string email, string phone, string employeetype, string address, string password)
+            {
+                Name = name;
+                FamilyName = familyname;
+                Email = email;
+                Mobile = phone;
+                EmployeeType = employeetype;
+                Address = address;
+                Password = password;
+            }
+        }
+        private static List<Employee> employees = new List<Employee>();
+
+
+        #endregion 
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+        #region Menus
+        static void MainMenu()
+        {
+            int MenuCount = 3;
+            int MMenuNumber;
+            string menu = ($"1: Login as a registered user\r\n2: Register as a new user\r\n3: Exit\nPlease enter a choice between 1 and {MenuCount}:");
+            Console.WriteLine(menu);
+            while (true)
+            {
+                //Go to login menu
+                MMenuNumber = MenuCountValidation(Console.ReadLine(),MenuCount);
+                if (MMenuNumber == 1)
+                {
+                    Login();
+                }
+                //Go to registration menu
+                if (MMenuNumber == 2)
+                {
+                    RegistrationMenu();
+                }
+                //exit the loop and head back to MAIN (exits application)
+                if (MMenuNumber == 3)
+                {
+                    break;
+                }
+                Console.WriteLine(menu);
+
+            }
+
+        }
+
+        static void RegistrationMenu()
+        {
+            int RMenuNumber = 3;
+            Console.WriteLine("Which type of user would you like to register as?");
+            Console.WriteLine($"1: Customer\r\n2: Employee\r\n3: Return to the previous menu\r\nPlease enter a choice between 1 and {RMenuNumber}:");
+            do
+            {
+                RMenuNumber = MenuCountValidation(Console.ReadLine(),RMenuNumber);
+                if (RMenuNumber == 1)
+                {
+                    RegisterCustomer();
+                    break;
+                }
+                if (RMenuNumber == 2)
+                {
+                    RegisterEmployee();
+                    break;
+                }
+            } while (RMenuNumber != 3);
+        }
+
+        static void CustomerMenu()
+        {
+            //Set currentCustomer when entering customer menu
+            if (currentUser is Customer customer)
+            {
+                currentCustomer = customer;
+            }
+
+            string menu = "Please make a choice from the menu below:\r\n1: Display your user information\r\n2: Select a list of restaurants to order from\r\n3: See the status of your orders\r\n4: Rate a restaurant you've ordered from\r\n5: Log out\r\nPlease enter a choice between 1 and 5:";
+            Console.WriteLine(menu);
+            int CMenuNumber;
+            while (true)
+            {
+                int MenuCount = 5;
+                CMenuNumber = MenuCountValidation(Console.ReadLine(), MenuCount);
+                if (CMenuNumber == 1)
+                {
+                    DisplayCurrentUserInfo();
+                }
+                if (CMenuNumber == 2)
+                {
+                    
+                }
+                if (CMenuNumber == 3)
+                {
+
+                }
+                if (CMenuNumber == 4)
+                {
+
+                }
+                if (CMenuNumber == 5)
+                {
+                    Console.WriteLine("You are now logged out.\r\n");
+                    Console.WriteLine("Please make a choice from the menu below:\r\n");
+                    break;
+                }
+                Console.WriteLine(menu);
+
+            }
+        }
+
+        static void EmployeeMenu()
+        {
+            string menu = "Please make a choice from the menu below:\r\n1: Display your user information\r\n2: List orders available to deliver\r\n3: Arrived at restaurant to pick up order\r\n4: Mark this delivery as complete\r\n5: Log out\r\nPlease enter a choice between 1 and 5:";
+            Console.WriteLine(menu);
+            int CMenuNumber;
+            while (true)
+            {
+                int MenuCount = 5;
+                CMenuNumber = MenuCountValidation(Console.ReadLine(), MenuCount);
+                if (CMenuNumber == 1)
+                {
+                    DisplayCurrentUserInfo();
+                }
+                if (CMenuNumber == 2)
+                {
+
+                }
+                if (CMenuNumber == 3)
+                {
+
+                }
+                if (CMenuNumber == 4)
+                {
+
+                }
+                if (CMenuNumber == 5)
+                {
+                    Console.WriteLine("You are now logged out.\r\n");
+                    Console.WriteLine("Please make a choice from the menu below:\r\n");
+                    break;
+                }
+                Console.WriteLine(menu);
+            }
+        }
+
+        #endregion
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+        #region MenuValidation       
+        static int MenuCountValidation(string choice, int maxChoice)
+        {
+            int menuInt;
+            while (true)
+            {
+                if (!(int.TryParse(choice, out menuInt)) || menuInt > maxChoice || menuInt < 1)
+                {
+                    Console.WriteLine($"Invalid Choice\r\nPlease enter a choice between 1 and {maxChoice}:");
+                }
+                else if (menuInt <= maxChoice && menuInt > 0)
+                {
+                    break;
+                }
+                choice = Console.ReadLine().Trim();
+            }
+            return menuInt;
+        }
+
+        #endregion
+
+// --------------------------------------------------------------------------------------------------------------------------------------
+
+        #region Registration/Login
+        static User AuthenticateUser(string email, string password)
+        {
+            //Check customers
+            var customer = customers.FirstOrDefault(c =>
+                c.Email.Equals(email, StringComparison.OrdinalIgnoreCase) &&
+                c.Password == password);
+
+            if (customer != null) return customer;
+
+            //Check employees
+            var employee = employees.FirstOrDefault(d =>
+                d.Email.Equals(email, StringComparison.OrdinalIgnoreCase) &&
+                d.Password == password);
+
+            return employee;
+
+        }
+        static void Login()
+        {
+            while (true)
+            {
+                Console.Write("Email:\r\n");
+                string email = Console.ReadLine().Trim();
+
+                Console.Write("Password:\r\n");
+                string password = Console.ReadLine().Trim();
+                //Enters input from user into variables email and password, passed to the above authenticate user method
+                //this method will check the recently enterred information against that existing in the respective lists in the classes section
+                User user = AuthenticateUser(email, password);
+
+                if (user != null)
+                {
+                    currentUser = user;
+                    //Successful login, will send user to respective menus
+                    if (user is Customer customer)
+                    {
+                        Console.WriteLine($"Welcome back, {customer.Name}!");
+                        CustomerMenu();
+                    }
+                    else if (user is Employee employee)
+                    {
+                        Console.WriteLine($"Welcome back, {employee.Name}!");
+                        EmployeeMenu();
+                    }
+                    return; //Exit login function on success
+                }
+                else
+                {
+                    Console.WriteLine("Invalid email or password.\r\n");
+                    Console.WriteLine("Please make a choice from the menu below:");
+                    break; //return to MainMenu if failure
+                }
+            }
+        }
+        static void RegisterCustomer()
+        {
+            string name = GetValidFirstName();
+            string familyname = GetValidFamilyName();                                           
+            string email = GetValidEmail();
+            string mobile = GetValidMobile();
+            string company = GetValidCompanyName();
+            string address = GetValidAddress();
+            string password = GetValidPassword();
+
+            //After validating each of the user inputs against the validation methods below, input all into a list of customers
+            Customer newCustomer = new Customer(name, familyname, email, mobile, company, address, password);
+            customers.Add(newCustomer);
+
+            //Final Line with customer name 
+            Console.WriteLine($"You have been successfully registered as a customer, {newCustomer.Name}!");
+            Console.WriteLine("Please make a choice from the menu below:");
+        }
+        static void RegisterEmployee()
+        {
+            string name = GetValidFirstName();
+            string familyname = GetValidFamilyName();
+            string email = GetValidEmail();
+            string mobile = GetValidMobile();
+            string employeetype = GetValidEmployeeType();
+            string address = GetValidAddress();
+            string password = GetValidPassword();
+
+            //After validating each of the user inputs against the validation methods below, input all into a list of employees
+            Employee newEmployee = new Employee(name, familyname, email, mobile, employeetype, address, password);
+            employees.Add(newEmployee);
+
+            Console.WriteLine($"\nYou have been successfully registered as a employee, {newEmployee.Name}!");
+            Console.WriteLine("Please make a choice from the menu below:");
+        }
+
+        #endregion
+
+// ---------------------------------------------------------------------------------------------------------------------------------------
+
+        #region Validation Methods
+        //validation methods to ensure user inputs when registering align with the Restrictions section of the assessment specification
+        static string GetValidFirstName()
+        {
+            string name;
+            while (true)
+            {
+                Console.Write("Please enter your full name:\r\n");
+                name = Console.ReadLine();
+
+                //Write invalid name if name is only whitespace
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    Console.WriteLine("Name invalid: cannot be null");
+                    continue;
+                }
+
+                //Check that each character is either a letter, space, hyphen or apostrophe. 
+                bool isValid = true;
+                foreach (char c in name)
+                {
+                    if (!(char.IsLetter(c) || c == ' ' || c == '-' || c == '\''))
+                    {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                //return invalid name if above case is true
+                if (isValid)
+                {
+                    return name.Trim();
+                }
+                Console.WriteLine("Invalid name: name may only consist of letters, hyphens and spaces.");
+            }
+        }
+
+        static string GetValidFamilyName()
+        {
+            string familyname;
+            while (true)
+            {
+                Console.Write("Please enter your family name:\r\n");
+                familyname = Console.ReadLine();
+
+                //Write invalid name if name is only whitespace
+                if (string.IsNullOrWhiteSpace(familyname))
+                {
+                    Console.WriteLine("Name invalid: cannot be null");
+                    continue;
+                }
+
+                //Check that each character is either a letter, space, hyphen or apostrophe. 
+                bool isValid = true;
+                foreach (char c in familyname)
+                {
+                    if (!(char.IsLetter(c) || c == ' ' || c == '-' || c == '\''))
+                    {
+                        isValid = false;
+                        break;
+                    }
+                }
+
+                //return invalid name if above case is true
+                if (isValid)
+                {
+                    return familyname.Trim();
+                }
+                Console.WriteLine("Invalid name: name may only consist of letters, hyphens and spaces.");
+            }
+        }
+
+        static string GetValidMobile()
+        {
+            string mobile;
+            while (true)
+            {
+                Console.Write("Please enter your mobile phone number in the form '04xxxxxxxx':\r\n");
+                mobile = Console.ReadLine().Trim();
+                //ensure length is 10, first digit is 0 and remaining input are also digits only
+                bool valid = mobile.Length == 10 && mobile[0] == '0';
+
+                if (valid)
+                {
+                    foreach (char c in mobile)
+                    {
+                        if (!char.IsDigit(c))
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (valid)
+                {
+                    return mobile;
+                }
+                Console.WriteLine("Invalid phone number.");
+            }
+        }
+
+        static string GetValidEmail()
+        {
+            string email;
+            while (true)
+            {
+                Console.Write("Please enter your email address:\r\n");
+                email = Console.ReadLine().Trim();
+
+                int atIndex = -1;
+                int atCount = 0;
+                //ensure there is only one @ symbol
+                for (int i = 0; i < email.Length; i++)
+                {
+                    if (email[i] == '@')
+                    {
+                        atCount++;
+                        atIndex = i;
+                    }
+                }
+
+                bool hasLocal = atIndex > 0;
+                bool hasDomain = atIndex < email.Length - 1;
+
+                if (atCount != 1 || !hasLocal || !hasDomain)
+                {
+                    //return invalid email and repeat process if booleans are false
+                    Console.WriteLine("Invalid email address.");
+                    continue;
+                }
+
+                //Check for existing email in all user lists
+                bool emailExists = customers.Any(c => c.Email.Equals(email, StringComparison.OrdinalIgnoreCase)) ||
+                                  employees.Any(d => d.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+
+                if (emailExists)
+                {
+                    Console.WriteLine("This email address is already in use.");
+                    continue;
+                }
+
+                return email;
+            }
+        }
+
+        static string GetValidPassword()
+        {
+            string password;
+            while (true)
+            {
+                Console.WriteLine("\r\nYour password must:\r\n- be at least 8 characters long\r\n- contain a number\r\n- contain a lowercase letter\r\n- contain an uppercase letter\r\nPlease enter a password:");
+                password = Console.ReadLine().Trim();
+
+                bool hasLower = false;
+                bool hasUpper = false;
+                bool hasDigit = false;
+                //check password restrictions
+                foreach (char c in password)
+                {
+                    //change booleans to false if certain requirements are not met
+                    if (char.IsLower(c)) hasLower = true;
+                    if (char.IsUpper(c)) hasUpper = true;
+                    if (char.IsDigit(c)) hasDigit = true;
+                }
+
+                if (password.Length < 8 || !hasLower || !hasUpper || !hasDigit)
+                {
+                    //pass invalid password if conditions are not met
+                    Console.WriteLine("Invalid password.");
+                }
+                else
+                {
+                    //Confirm password
+                    Console.Write("Please confirm your password:\r\n");
+                    string confirm = Console.ReadLine().Trim();
+
+                    if (password != confirm)
+                    {
+                        Console.WriteLine("Passwords do not match.");
+                    }
+                    else
+                    {
+                        return password;
+                    }
+                }
+            }
+        }
+
+        static string GetValidCompanyName()
+        {
+         
+            while (true)
+            {
+                Console.Write("Please enter your Company name:\r\n(*Optional - Leave blank if desired)");
+                string restname = Console.ReadLine();
+                //Ensure restaurant name is not just blank
+                if (!string.IsNullOrWhiteSpace(restname))
+                {
+                    return restname.Trim();
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        static string GetValidEmployeeType()
+        {
+            string options = ("Please select your employee type:\r\n1: Admin\r\n2: Quotation Officer\r\n3: Booking Officer\r\n4: Warehouse Officer\r\n5: Manager\r\n6: CIO\r\nPlease enter a choice between 1 and 6:");
+            Console.WriteLine(options);
+            int selection;
+            int MenuCount = 6;
+            selection = MenuCountValidation(Console.ReadLine(), MenuCount);
+
+            if (selection == 1)
+            {
+                return "Admin";
+            }
+            else if (selection == 2)
+            {
+                return "Quotation Officer";
+            }
+            else if (selection == 3)
+            {
+                return "Booking Officer";
+            }
+            else if (selection == 4)
+            {
+                return "Warehouse Officer";
+            }
+            else if (selection == 5)
+            {
+                return "Manager";
+            }
+            else if (selection == 6)
+            {
+                return "CIO";
+            }
+
+            return "Unknown"; //Fallback (shouldn't reach here due to validation)
+        }
+
+        #endregion
+
+// -------------------------------------------------------------------------------------------------------------------------------------
+       
+        #region User Methods
+
+        #region Common Methods
+        public static void DisplayCurrentUserInfo()
+        {
+            //depending on current user, list the relevent list entries for each user type
+            Console.WriteLine("Your user details are as follows:\r\n");
+
+            //Type-specific information
+            switch (currentUser)
+            {
+                case Customer customer:
+                    Console.WriteLine($"Name: {customer.Name}");
+                    Console.WriteLine($"Age: {customer.FamilyName}");
+                    Console.WriteLine($"Email: {customer.Email}");
+                    Console.WriteLine($"Mobile: {customer.Mobile}");
+                    if (customer.Company != null)
+                    {
+                        Console.WriteLine($"Company: {customer.Company}");
+                    }
+                    Console.WriteLine($"Address: {customer.Address}");
+                    break;
+
+                case Employee employee:
+                    Console.WriteLine($"Name: {employee.Name}");
+                    Console.WriteLine($"Age: {employee.FamilyName}");
+                    Console.WriteLine($"Email: {employee.Email}");
+                    Console.WriteLine($"Mobile: {employee.Mobile}");
+                    Console.WriteLine($"Employee Type: {employee.EmployeeType}");
+                    Console.WriteLine($"Address: {employee.Address}");
+                    break;
+            }
+        }
+        #endregion
+
+
+        #region Customer Menu Methods
+
+        #endregion
+
+
+        #region Employee Menu Methods
+
+        #endregion
+
+
+        #endregion
+
+// -----------------------------------------------------------------------------------------------------------------------------------------
+
+        #region Main
+        static void Main(string[] args)
+        {
+
+            //intro text
+            Console.WriteLine("Welcome to Arriba Eats!");
+            Console.WriteLine("Please make a choice from the menu below:\r\n");
+
+            //moving to main menu
+            MainMenu();
+
+            //main menu exited, goodbye!
+            Console.WriteLine("Thank you for using Arriba Eats!");
+        }
+
+        #endregion
+
+// ----------------------------------------------------------------------------------------------------------------------------------------------
+    }
+}
