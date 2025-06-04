@@ -1,0 +1,7 @@
+C:\Users\victo\source\repos\IAB251\IAB251\bin\Debug\IAB251.exe.config
+C:\Users\victo\source\repos\IAB251\IAB251\bin\Debug\IAB251.exe
+C:\Users\victo\source\repos\IAB251\IAB251\bin\Debug\IAB251.pdb
+C:\Users\victo\source\repos\IAB251\IAB251\obj\Debug\IAB251.csproj.AssemblyReference.cache
+C:\Users\victo\source\repos\IAB251\IAB251\obj\Debug\IAB251.csproj.CoreCompileInputs.cache
+C:\Users\victo\source\repos\IAB251\IAB251\obj\Debug\IAB251.exe
+C:\Users\victo\source\repos\IAB251\IAB251\obj\Debug\IAB251.pdb
